@@ -1,12 +1,12 @@
 import Link from "next/link"
-import DesktopNavigation from "./DesktopNavigation";
+import Navigation from "./Navigation";
 import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSun, FiMoon, FiSearch } from 'react-icons/fi';
 import MobileMenu from "./MoblieMenu";
 
 const Navbar = () => {
     return (
         <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 shadow-md transition-colors duration-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
@@ -19,7 +19,7 @@ const Navbar = () => {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <DesktopNavigation />
+                    <Navigation entity="desktop" />
 
                     {/* Right Section */}
                     <div className="hidden md:flex items-center space-x-4">
@@ -57,13 +57,8 @@ const Navbar = () => {
                             </Link>
                         </div>
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <MobileMenu entity="button" />
                 </div>
-
-                {/* Mobile Menu */}
-                
+                <MobileMenu />
             </div>
         </nav>
     )
