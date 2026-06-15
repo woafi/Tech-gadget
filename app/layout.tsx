@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer";
+
 import { ThemeProvider } from "next-themes";
-
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -30,6 +30,7 @@ export default function RootLayout({
         <div className='flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-200'>
           {children}
         </div>
+        <Footer />
         </ThemeProvider>
       </body>
     </html>

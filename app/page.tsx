@@ -1,7 +1,10 @@
 import Image from "next/image";
-import HeroSection from "@/components/HeroSection";
 import { FiArrowRight, FiShoppingBag, FiZap, FiTrendingUp } from 'react-icons/fi';
 import Link from "next/link";
+
+import ProductCard from "@/components/ProductCard";
+import HeroSection from "@/components/HeroSection";
+
 import { getSomeProducts } from "@/lib/product-store";
 
 export default async function Home() {
@@ -84,8 +87,60 @@ export default async function Home() {
               ))}
             </div>
           ) : (
-            
+            <div className="flex justify-center items-center text-xl font-bold">
+              <span>There is no product</span>
+            </div>
           )}
+
+          <div
+            className="mt-8 text-center md:hidden"
+          >
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 text-sky-600 dark:text-sky-400 font-semibold"
+            >
+              View All Products <FiArrowRight />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section
+        className="py-16 bg-gradient-to-r from-sky-600 to-purple-600 relative overflow-hidden"
+      >
+        {/* Animated Background */}
+        <div
+          className="absolute inset-0 opacity-10"
+        />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+          >
+            Ready to Upgrade Your Tech?
+          </h2>
+          <p
+            className="text-sky-100 text-lg mb-8 max-w-2xl mx-auto"
+          >
+            Sign up today and get exclusive access to deals, new arrivals, and personalized recommendations.
+          </p>
+          <div>
+            <Link
+              href="/signup"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-600 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 active:scale-95"
+            >
+              Get Started
+              <svg
+                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

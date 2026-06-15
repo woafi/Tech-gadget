@@ -7,6 +7,5 @@ export async function getSomeProducts() {
         },
         take: 6,
     })
-    console.log(products)
     return products;
 }
