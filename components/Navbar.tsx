@@ -1,4 +1,7 @@
 import Link from "next/link"
+import DesktopNavigation from "./DesktopNavigation";
+import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSun, FiMoon, FiSearch } from 'react-icons/fi';
+import MobileMenu from "./MoblieMenu";
 
 const Navbar = () => {
     return (
@@ -16,8 +19,51 @@ const Navbar = () => {
                     </Link>
 
                     {/* Desktop Navigation */}
+                    <DesktopNavigation />
 
+                    {/* Right Section */}
+                    <div className="hidden md:flex items-center space-x-4">
+                        {/* Search Icon */}
+                        <Link
+                            href="/shop"
+                            className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                            aria-label="Search products"
+                        >
+                            <FiSearch size={20} />
+                        </Link>
+
+                        {/* Theme Toggle */}
+                        <button
+                            // onClick={toggleTheme}
+                            className="p-2 rounded-lg cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            {/* {theme === 'light' ? <FiMoon size={20} /> : <FiSun size={20} />} */}
+                            <FiSun size={20} />
+                        </button>
+
+                        <div className="flex items-center space-x-3">
+                            <Link
+                                href="/login"
+                                className="text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors font-medium"
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                href="/signup"
+                                className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors font-medium"
+                            >
+                                Sign Up
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Mobile Menu Button */}
+                    <MobileMenu entity="button" />
                 </div>
+
+                {/* Mobile Menu */}
+                
             </div>
         </nav>
     )
