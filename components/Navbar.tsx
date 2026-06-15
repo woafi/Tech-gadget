@@ -1,7 +1,9 @@
 import Link from "next/link"
 import Navigation from "./Navigation";
 import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSun, FiMoon, FiSearch } from 'react-icons/fi';
+
 import MobileMenu from "./MoblieMenu";
+import Theme from "./Theme";
 
 const Navbar = () => {
     return (
@@ -33,14 +35,7 @@ const Navbar = () => {
                         </Link>
 
                         {/* Theme Toggle */}
-                        <button
-                            // onClick={toggleTheme}
-                            className="p-2 rounded-lg cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-                            aria-label="Toggle theme"
-                        >
-                            {/* {theme === 'light' ? <FiMoon size={20} /> : <FiSun size={20} />} */}
-                            <FiSun size={20} />
-                        </button>
+                        <Theme device=""/>
 
                         <div className="flex items-center space-x-3">
                             <Link

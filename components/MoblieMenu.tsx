@@ -1,9 +1,10 @@
 "use client"
 import { useState } from "react"
-import { FiMenu, FiX,  FiSun, FiMoon } from 'react-icons/fi';
-import Navigation from "./Navigation";
+import { FiMenu, FiX, FiSun, FiMoon } from 'react-icons/fi';
 import Link from "next/link";
 
+import Navigation from "./Navigation";
+import Theme from "./Theme";
 
 export default function MobileMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,17 +37,9 @@ export default function MobileMenu() {
                             Sign Up
                         </Link>
 
-                        <button
-                            // onClick={() => {
-                            //     toggleTheme();
-                            //     setMobileMenuOpen(false);
-                            // }}
-                            className="text-left text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors flex items-center gap-2"
-                        >
-                           
-                                    <FiSun /> Light Mode
-                           
-                        </button>
+                        <div>
+                        <Theme device="mobile"/>
+                        </div>
                     </div>
                 </div>
             )}

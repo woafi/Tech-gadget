@@ -1,4 +1,6 @@
 import Navbar from "@/components/Navbar"
+import { ThemeProvider } from "next-themes";
+
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -19,13 +21,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <Navbar />
         <div className='flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-200'>
           {children}
         </div>
+        </ThemeProvider>
       </body>
     </html>
   );
