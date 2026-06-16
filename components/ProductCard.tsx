@@ -1,7 +1,7 @@
 import Link from "next/link";
-import type { Product } from '@/types';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import Image from "next/image";
+import type { Product } from "@prisma/client";
 
 
 

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { FiArrowRight, FiShoppingBag, FiZap, FiTrendingUp } from 'react-icons/fi';
 import Link from "next/link";
 
@@ -91,7 +90,6 @@ export default async function Home() {
               <span>There is no product</span>
             </div>
           )}
-
           <div
             className="mt-8 text-center md:hidden"
           >

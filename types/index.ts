@@ -20,10 +20,10 @@ export interface Product {
     stock: number;
     categoryId: number;
     brand: string;
-    model?: string;
+    model?: string | null;
     category?: Category;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface CartItem {

@@ -9,3 +9,14 @@ export async function getSomeProducts() {
     })
     return products;
 }
+
+export async function getAllProducts(safeCurrentPage: number, ITEMS_PER_PAGE: number) {
+    const products = await prisma.product.findMany({
+        orderBy: {
+            createdAt: 'desc',
+        },
+        skip: (safeCurrentPage - 1) * ITEMS_PER_PAGE,
+        take: ITEMS_PER_PAGE,
+    })
+    return products;
+}
