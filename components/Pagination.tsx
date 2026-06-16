@@ -1,17 +1,50 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
-    onPageChange: (page: number) => void;
+    onPageChange?: (page: number) => void;
+    queryParamKey?: string;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({
+    currentPage,
+    totalPages,
+    onPageChange,
+    queryParamKey,
+}: PaginationProps) => {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     if (totalPages <= 1) return null;
+
+    // Handle Page Change
+    const handlePageChange = (page: number) => {
+        const nextPage = Math.max(1, Math.min(page, totalPages));
+
+        if (queryParamKey) {
+            const params = new URLSearchParams(searchParams.toString());
+
+            if (nextPage === 1) {
+                params.delete(queryParamKey);
+            } else {
+                params.set(queryParamKey, String(nextPage));
+            }
+
+            const query = params.toString();
+            router.push(query ? `${pathname}?${query}` : pathname);
+            return;
+        }
+
+        if (onPageChange) {
+            onPageChange(nextPage);
+        }
+    };
 
     const getPageNumbers = () => {
         const pages: (number | string)[] = [];
@@ -61,7 +94,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             {/* Previous Button */}
             <motion.button
                 type="button"
-                onClick={() => onPageChange(currentPage - 1)}
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`flex cursor-pointer items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${currentPage === 1
                     ? 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
@@ -95,7 +128,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                         <motion.button
                             type="button"
                             key={pageNum}
-                            onClick={() => onPageChange(pageNum)}
+                            onClick={() => handlePageChange(pageNum)}
                             className={`min-w-[40px] px-3 py-2 cursor-pointer rounded-lg font-medium transition-all ${isActive
                                 ? 'bg-sky-600 text-white shadow-lg'
                                 : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-sky-50 dark:hover:bg-slate-700 hover:text-sky-600 dark:hover:text-sky-400 shadow-sm'
@@ -115,7 +148,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             {/* Next Button */}
             <motion.button
                 type="button"
-                onClick={() => onPageChange(currentPage + 1)}
+                onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={`flex cursor-pointer items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${currentPage === totalPages
                     ? 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'

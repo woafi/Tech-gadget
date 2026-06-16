@@ -12,7 +12,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     return (
-        <div className="group block bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+        <div className="group block bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-2xl overflow-hidden transition-transform duration-300 hover:scale-105">
             {/* Image */}
             <div className="relative aspect-[4/3] w-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
                 {product.image ? (

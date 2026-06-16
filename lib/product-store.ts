@@ -10,8 +10,13 @@ export async function getSomeProducts() {
     return products;
 }
 
-export async function getAllProducts(safeCurrentPage: number, ITEMS_PER_PAGE: number) {
+export async function getAllProducts(safeCurrentPage: number, ITEMS_PER_PAGE: number, whereClause: any) {
+
     const products = await prisma.product.findMany({
+        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+        include: {
+            category: true,
+        },
         orderBy: {
             createdAt: 'desc',
         },
