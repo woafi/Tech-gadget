@@ -25,3 +25,31 @@ export async function getAllProducts(safeCurrentPage: number, ITEMS_PER_PAGE: nu
     })
     return products;
 }
+
+export async function getAllBrands() {
+    const brands = await prisma.product.findMany({
+        select: {
+            brand: true,
+        },
+        distinct: ['brand'],
+        orderBy: {
+            brand: 'asc',
+        },
+    })
+    return brands.map(b => b.brand);
+}
+
+export async function getPriceRange() {
+    const aggregation = await prisma.product.aggregate({
+        _min: {
+            price: true,
+        },
+        _max: {
+            price: true,
+        },
+    })
+    return {
+        minPrice: aggregation._min.price ?? 0,
+        maxPrice: aggregation._max.price ?? 1000,
+    }
+}

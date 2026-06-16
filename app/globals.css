@@ -22,3 +22,30 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@utility animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+@utility animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+@utility animate-delay-300 {
+  animation-delay: 300ms;
+}
