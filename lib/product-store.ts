@@ -26,17 +26,36 @@ export async function getAllProducts(safeCurrentPage: number, ITEMS_PER_PAGE: nu
     return products;
 }
 
-export async function getAllBrands() {
-    const brands = await prisma.product.findMany({
-        select: {
-            brand: true,
-        },
-        distinct: ['brand'],
-        orderBy: {
-            brand: 'asc',
-        },
-    })
-    return brands.map(b => b.brand);
+export async function getAllBrands(categoryName: string) {
+    if (categoryName) {
+        const products = await prisma.product.findMany({
+            where: {
+                category: {
+                    name: categoryName // Queries the name field inside the Category model
+                }
+            }, // Added missing comma here
+            select: {
+                brand: true,
+            },
+            distinct: ['brand'],
+            orderBy: {
+                brand: 'asc',
+            },
+        });
+
+        return products.map((b: any) => b.brand);
+    } else {
+        const brands = await prisma.product.findMany({
+            select: {
+                brand: true,
+            },
+            distinct: ['brand'],
+            orderBy: {
+                brand: 'asc',
+            },
+        })
+        return brands.map((b: any) => b.brand);
+    }
 }
 
 export async function getPriceRange() {

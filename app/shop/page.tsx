@@ -75,7 +75,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     const products = await getAllProducts(safeCurrentPage, ITEMS_PER_PAGE, whereClause)
 
     // Fetch brands and price range for filter components
-    const brands = await getAllBrands();
+    const brands = await getAllBrands(category);
     const priceRange = await getPriceRange();
 
     return (
