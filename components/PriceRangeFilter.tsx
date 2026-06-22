@@ -28,19 +28,23 @@ export default function PriceRangeFilter({ minPrice: globalMin, maxPrice: global
     const applyPriceFilter = () => {
         const params = new URLSearchParams(searchParams.toString());
 
-        const min = localMin ? String(Number(localMin)) : '';
-        const max = localMax ? String(Number(localMax)) : '';
+        let min = localMin ? Number(localMin) : NaN;
+        let max = localMax ? Number(localMax) : NaN;
 
-        if (min && Number(min) >= 0) {
-            params.set('minPrice', min);
-        } else {
-            params.delete('minPrice');
+        if (!Number.isNaN(min) && !Number.isNaN(max) && min > max) {
+            [min, max] = [max, min];
         }
 
-        if (max && Number(max) > 0) {
-            params.set('maxPrice', max);
+        if (!Number.isNaN(min) && min >= 0) {
+            params.set("minPrice", String(min));
         } else {
-            params.delete('maxPrice');
+            params.delete("minPrice");
+        }
+
+        if (!Number.isNaN(max) && max > 0) {
+            params.set("maxPrice", String(max));
+        } else {
+            params.delete("maxPrice");
         }
 
         params.delete('page');

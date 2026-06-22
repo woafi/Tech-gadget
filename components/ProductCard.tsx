@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { FiShoppingCart, FiHeart } from 'react-icons/fi';
+import { FiHeart } from 'react-icons/fi';
 import Image from "next/image";
-import type { Product } from "@prisma/client";
+import type { Product, Category } from "@prisma/client";
+import AddToCartButton from "@/components/AddToCartButton";
 
-
+type ProductWithCategory = Product & {
+  category: Category;
+};
 
 interface ProductCardProps {
-    product: Product;
+    product: ProductWithCategory;
     index?: number;
 }
 
@@ -104,14 +107,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         ${product.price.toFixed(2)}
                     </span>
 
-                    <button
-                        // onClick={handleAddToCart}
+                    <AddToCartButton
+                        productId={product.id}
                         disabled={product.stock === 0}
                         className="px-4 py-2.5 bg-sky-600 cursor-pointer hover:bg-sky-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
-                    >
-                        <FiShoppingCart size={16} />
-                        <span className="text-sm font-medium">Add</span>
-                    </button>
+                    />
                 </div>
             </div>
         </div>

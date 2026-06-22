@@ -4,13 +4,14 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import HeroSection from "@/components/HeroSection";
 
-import { getSomeProducts } from "@/lib/product-store";
+import { getSomeProducts, getAllCategories } from "@/lib/product-store";
 
 export default async function Home() {
 
-  const categories = ['Smartphones', 'Laptops', 'Headphones', 'Smartwatches', 'Accessories'];
-
-  const products = await getSomeProducts()
+  const [products, categories] = await Promise.all([
+    getSomeProducts(),
+    getAllCategories(),
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -35,21 +36,21 @@ export default async function Home() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {categories.map((category) => (
             <div
-              key={category}
+              key={category.id}
               className="transform transition-all duration-300 hover:-translate-y-1 hover:scale-105"
             >
               <Link
-                href={`/shop?category=${category}`}
+                href={`/shop?category=${encodeURIComponent(category.name)}`}
                 className="block p-6 bg-gray-50 dark:bg-slate-900 rounded-lg text-center hover:shadow-xl transition-all duration-300 group"
               >
                 {/* Icon Circle */}
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-sky-500 to-purple-600 rounded-full flex items-center justify-center text-2xl text-white font-bold transition-transform duration-500 group-hover:rotate-[360deg]">
-                  {category.charAt(0)}
+                  {category.name.charAt(0)}
                 </div>
 
                 {/* Category Name */}
                 <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-300">
-                  {category}
+                  {category.name}
                 </h3>
               </Link>
             </div>
