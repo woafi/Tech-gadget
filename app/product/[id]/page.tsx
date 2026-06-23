@@ -3,11 +3,21 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { FiArrowLeft, FiHeart, FiPackage, FiTag } from "react-icons/fi";
-import { getProductById } from "@/lib/product-store";
+import { getAllProductIds, getProductById } from "@/lib/product-store";
 import AddToCartButton from "@/components/AddToCartButton";
+
+export const dynamicParams = false;
 
 interface ProductPageProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams() {
+    const products = await getAllProductIds();
+
+    return products.map((product) => ({
+        id: product.id.toString(),
+    }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -121,12 +131,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 productId={product.id}
                                 disabled={!inStock}
                                 label="Add to Cart"
-                                className="px-8 py-3.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg font-medium"
+                                className="px-8 py-3.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg font-medium cursor-pointer"
                             />
                             <button
                                 type="button"
                                 aria-label="Add to wishlist"
-                                className="px-4 py-3.5 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-300 transition-colors"
+                                className="px-4 py-3.5 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-300 transition-colors cursor-pointer"
                             >
                                 <FiHeart size={20} />
                             </button>

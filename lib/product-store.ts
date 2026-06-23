@@ -139,6 +139,13 @@ export async function getProductById(id: number) {
     })
 }
 
+export async function getAllProductIds() {
+    return prisma.product.findMany({
+        select: { id: true },
+        orderBy: { id: "asc" },
+    })
+}
+
 export async function getAllCategories() {
     return prisma.category.findMany({
         orderBy: { name: "asc" },

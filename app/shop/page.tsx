@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
 import { getShopProducts, parseSort } from "@/lib/product-store";
 import ProductCard from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
@@ -11,6 +12,13 @@ import SortFilter from "@/components/SortFilter";
 import { FiFilter } from "react-icons/fi";
 
 const ITEMS_PER_PAGE = 12;
+
+export const revalidate = 300;
+
+const getCachedShopProducts = unstable_cache(getShopProducts, ["shop-products"], {
+    revalidate: 300,
+    tags: ["shop-products"],
+});
 
 export const metadata: Metadata = {
     title: "Shop Products | Tech Gadget",
@@ -60,7 +68,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     };
 
     const { products, totalProducts, totalPages, safePage, brands, priceRange, categories } =
-        await getShopProducts(currentPage, ITEMS_PER_PAGE, filters);
+        await getCachedShopProducts(currentPage, ITEMS_PER_PAGE, filters);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8">
@@ -136,3 +144,4 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         </div>
     );
 }
+
