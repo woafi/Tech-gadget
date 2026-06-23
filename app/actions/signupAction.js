@@ -43,7 +43,7 @@ export async function signupAction(prevState, formData) {
         const fieldErrors = result.error.flatten().fieldErrors;
 
         return {
-            message: "Please fix the highlighted fields.",
+            message: "Please fill the highlighted fields.",
             fieldErrors: {
                 name: fieldErrors.name?.[0] || "",
                 email: fieldErrors.email?.[0] || "",
