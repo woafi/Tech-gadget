@@ -8,36 +8,29 @@ import {
     FiEyeOff,
     FiLock,
     FiMail,
-    FiUser,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
-import { signupAction } from "@/app/actions/signupAction";
+import { loginAction } from "@/app/actions/loginAction";
 
 const initialState = {
     message: "",
     fieldErrors: {
-        name: "",
         email: "",
         password: "",
-        confirmPassword: "",
     },
     values: {
-        name: "",
         email: "",
         password: "",
-        confirmPassword: "",
     },
 };
 
-export default function Signup() {
+export default function Login() {
     const [state, formAction, pending] = useActionState(
-        signupAction,
+        loginAction,
         initialState,
     );
     const [showPassword, setShowPassword] = useState(false);
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -53,9 +46,6 @@ export default function Signup() {
         }
     };
 
-    const hasStrongPassword =
-        password.length >= 10 && /[A-Z]/.test(password) && /[0-9]/.test(password);
-
     return (
         <main className="min-h-screen flex bg-white dark:bg-slate-900">
             {/* Left Section - Branding */}
@@ -67,13 +57,13 @@ export default function Signup() {
                     <h1
                         className="text-4xl font-bold mb-6 animate-fade-in"
                     >
-                        Join Our Tech Community
+                        Welcome Back
                     </h1>
                     <p
                         className="text-lg text-purple-100 animate-fade-in"
                     >
-                        Create an account to access exclusive deals, track your
-                        orders, and enjoy a personalized shopping experience.
+                        Log in to track your orders, manage your wishlist, and
+                        pick up right where you left off.
                     </p>
                 </div>
             </section>
@@ -85,10 +75,10 @@ export default function Signup() {
                         className="mb-8 animate-fade-in-down"
                     >
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                            Create Account
+                            Log In
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400">
-                            Sign up to start your tech shopping journey
+                            Sign in to continue to your account
                         </p>
                     </div>
 
@@ -112,7 +102,7 @@ export default function Signup() {
                             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-500 dark:text-gray-400 shadow-sm disabled:cursor-not-allowed disabled:opacity-70"
                         >
                             <FcGoogle size={24} />
-                            <span>Sign up with Google</span>
+                            <span>Log in with Google</span>
                         </button>
                     </div>
 
@@ -124,7 +114,7 @@ export default function Signup() {
                         </div>
                         <div className="relative flex justify-center text-sm">
                             <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400">
-                                Or sign up with email
+                                Or log in with email
                             </span>
                         </div>
                     </div>
@@ -137,41 +127,6 @@ export default function Signup() {
                             onKeyDown={handleFormKeyDown}
                             className="space-y-6"
                         >
-                            <div
-                                className="animate-fade-in"
-                            >
-                                <label
-                                    htmlFor="name"
-                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                >
-                                    Full Name
-                                </label>
-                                <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                        <FiUser />
-                                    </div>
-                                    <input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        placeholder="John Doe"
-                                        defaultValue={state.values.name}
-                                        disabled={pending}
-                                        autoComplete="name"
-                                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${
-                                            state.fieldErrors.name
-                                                ? "border-red-300 dark:border-red-700"
-                                                : "border-gray-300 dark:border-gray-600"
-                                        }`}
-                                    />
-                                </div>
-                                {state.fieldErrors.name && (
-                                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                        {state.fieldErrors.name}
-                                    </p>
-                                )}
-                            </div>
-
                             <div
                                 className="animate-fade-in"
                             >
@@ -224,11 +179,10 @@ export default function Signup() {
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="At least 6 characters"
-                                        value={password}
-                                        onChange={(event) => setPassword(event.target.value)}
+                                        placeholder="Enter your password"
+                                        defaultValue={state.values.password}
                                         disabled={pending}
-                                        autoComplete="new-password"
+                                        autoComplete="current-password"
                                         className={`w-full pl-10 pr-12 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${
                                             state.fieldErrors.password
                                                 ? "border-red-300 dark:border-red-700"
@@ -261,81 +215,12 @@ export default function Signup() {
                             <div
                                 className="animate-fade-in"
                             >
-                                <label
-                                    htmlFor="confirmPassword"
-                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                >
-                                    Confirm Password
-                                </label>
-                                <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                        <FiLock />
-                                    </div>
-                                    <input
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Repeat your password"
-                                        value={confirmPassword}
-                                        onChange={(event) =>
-                                            setConfirmPassword(event.target.value)
-                                        }
-                                        disabled={pending}
-                                        autoComplete="new-password"
-                                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${
-                                            state.fieldErrors.confirmPassword
-                                                ? "border-red-300 dark:border-red-700"
-                                                : "border-gray-300 dark:border-gray-600"
-                                        }`}
-                                    />
-                                </div>
-                                {state.fieldErrors.confirmPassword && (
-                                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                        {state.fieldErrors.confirmPassword}
-                                    </p>
-                                )}
-                            </div>
-
-                            {password && (
-                                <div className="p-3 bg-gray-50 dark:bg-slate-800 rounded-lg animate-scale-in">
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                                        Password strength:
-                                    </p>
-                                    <div className="flex gap-1">
-                                        <div
-                                            className={`h-1 flex-1 transition-colors duration-300 rounded ${
-                                                password.length >= 4
-                                                    ? "bg-red-500"
-                                                    : "bg-gray-300 dark:bg-gray-600"
-                                            }`}
-                                        />
-                                        <div
-                                            className={`h-1 flex-1 transition-colors duration-300 rounded ${
-                                                password.length >= 8
-                                                    ? "bg-yellow-500"
-                                                    : "bg-gray-300 dark:bg-gray-600"
-                                            }`}
-                                        />
-                                        <div
-                                            className={`h-1 flex-1 transition-colors duration-300 rounded ${
-                                                hasStrongPassword
-                                                    ? "bg-green-500"
-                                                    : "bg-gray-300 dark:bg-gray-600"
-                                            }`}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-
-                            <div
-                                className="animate-fade-in"
-                            >
                                 <button
                                     type="submit"
                                     disabled={pending}
                                     className="cursor-pointer w-full px-4 py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-500 disabled:cursor-wait text-white rounded-lg transition-colors font-semibold shadow-sm"
                                 >
-                                    {pending ? "Creating account..." : "Sign Up"}
+                                    {pending ? "Logging in..." : "Log In"}
                                 </button>
                             </div>
                         </form>
@@ -345,12 +230,12 @@ export default function Signup() {
                         className="mt-6 text-center animate-fade-in"
                     >
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Already have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <Link
-                                href="/login"
+                                href="/signup"
                                 className="text-sky-600 dark:text-sky-400 font-medium hover:underline"
                             >
-                                Log in
+                                Sign up
                             </Link>
                         </p>
                     </div>

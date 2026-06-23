@@ -11,7 +11,7 @@ const authPayloadSchema = z
     })
     .passthrough();
 
-const authPages = new Set(["/login", "/Login", "/signup", "/Signup"]);
+const authPages = new Set(["/login", "/signup"]);
 const protectedPrefixes = [
     "/account",
     "/cart",
@@ -62,16 +62,6 @@ export async function proxy(request: NextRequest) {
 
     if (authPages.has(pathname) && isAuthenticated) {
         return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    if (pathname === "/signup") {
-        const response = NextResponse.rewrite(new URL("/Signup", request.url));
-
-        if (shouldClearCookie) {
-            deleteAuthCookie(response);
-        }
-
-        return response;
     }
 
     if (isProtectedPath(pathname) && !isAuthenticated) {

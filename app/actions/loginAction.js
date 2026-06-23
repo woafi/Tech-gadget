@@ -1,106 +1,81 @@
 "use server";
 
-import { z } from 'zod'
-import { redirect } from 'next/navigation';
-import { generateAccessToken, setAuthCookies, verifyPassword } from '@/lib/auth';
-import { getRoleHome } from "@/lib/getRoleHome" 
+import { z } from "zod";
+import { redirect } from "next/navigation";
+import { generateAccessToken, setAuthCookies, verifyPassword } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-
-//LoginSchema
 const loginSchema = z.object({
-    phone: z
+    email: z
         .string()
         .trim()
-        .regex(/^01[0-9]{9}$/, "Invalid phone number format"),
+        .toLowerCase()
+        .min(1, "Email is required")
+        .email("Enter a valid email address"),
     password: z
         .string()
-        .min(1, "Password is required")
-        .min(5, "Password must be at least 5 characters"),
+        .min(1, "Password is required"),
 });
-
 
 export async function loginAction(prevState, formData) {
     const raw = Object.fromEntries(formData);
     const result = loginSchema.safeParse(raw);
 
+    const values = {
+        email: typeof raw.email === "string" ? raw.email : "",
+        password: "",
+    };
+
     if (!result.success) {
         const fieldErrors = result.error.flatten().fieldErrors;
 
         return {
-            message: "Invalid Credential",
+            message: "Please fill the highlighted fields.",
             fieldErrors: {
-                phone: fieldErrors.phone?.[0] || "",
+                email: fieldErrors.email?.[0] || "",
                 password: fieldErrors.password?.[0] || "",
             },
-            values: {
-                phone: raw.phone || "",
-                password: raw.password || "",
-            },
-        }
-    }
-
-    const { phone, password } = result.data;
-
-    try {
-        // Find existence user
-        const user = await prisma.user.findUnique({
-            where: { phone },
-        });
-
-        if (!user) {
-            return {
-                message: "User not found!",
-                fieldErrors: { phone: "", password: "" },
-                values: {
-                    phone: raw.phone || "",
-                    password: raw.password || "",
-                },
-            };
-        }
-
-        // Verify password
-        const isValid = await verifyPassword(password, user.password);
-        if (!isValid) {
-            return {
-                message: "Password is wrong!",
-                fieldErrors: { phone: "", password: "" },
-                values: {
-                    phone: raw.phone || "",
-                    password: raw.password || "",
-                },
-            };
-        }
-
-        // Generate tokens
-        const accessToken = await generateAccessToken(user);
-        await setAuthCookies(accessToken);
-
-        // Update last login
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { lastLoginAt: new Date() },
-        });
-
-        const redirectUrl = getRoleHome(user);
-
-        redirect(redirectUrl);
-
-    } catch (error) {
-        // If it's a redirect error, let it propagate
-        if (error.message === 'NEXT_REDIRECT') {
-            throw error;
-        }
-
-        console.log(error);
-        return {
-            message: "Server Error",
-            fieldErrors: { phone: "", password: "" },
-            values: {
-                phone: raw.phone || "",
-                password: raw.password || "",
-            },
+            values,
         };
     }
 
+    const { email, password } = result.data;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        // Use a single generic message for both cases to avoid
+        // revealing whether an email is registered.
+        if (!user) {
+            return {
+                message: "Invalid email or password.",
+                fieldErrors: { email: "", password: "" },
+                values,
+            };
+        }
+
+        const isValid = await verifyPassword(password, user.password);
+        if (!isValid) {
+            return {
+                message: "Invalid email or password.",
+                fieldErrors: { email: "", password: "" },
+                values,
+            };
+        }
+
+        const accessToken = await generateAccessToken(user);
+        await setAuthCookies(accessToken);
+    } catch (error) {
+        console.error(error);
+
+        return {
+            message: "Server error. Please try again.",
+            fieldErrors: { email: "", password: "" },
+            values,
+        };
+    }
+
+    redirect("/");
 }
