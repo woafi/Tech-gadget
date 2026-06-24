@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { generateAccessToken, hashPassword, setAuthCookies } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import prisma from "@/utils/prisma";
 
 const signupSchema = z
     .object({

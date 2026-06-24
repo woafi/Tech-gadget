@@ -1,89 +1,83 @@
-import { jwtVerify } from "jose";
+import { verifyAccessToken } from "@/lib/auth";
 import { NextResponse, type NextRequest } from "next/server";
-import { z } from "zod";
 
-const authPayloadSchema = z
-    .object({
-        id: z.union([z.number(), z.string()]),
-        userid: z.union([z.number(), z.string()]).optional(),
-        username: z.string().optional(),
-        email: z.string().email().optional(),
-    })
-    .passthrough();
+const authPaths = [
+    "/login",
+    "/signup",
+    "/forgetpassword",
+    "/resentpassword",
+];
 
-const authPages = new Set(["/login", "/signup"]);
-const protectedPrefixes = [
-    "/account",
-    "/cart",
-    "/checkout",
-    "/orders",
+const protectedPaths = [
     "/profile",
+    "/cart",
+    "/orders",
+    "/paymentfailed",
+    "/paymentsuccess",
     "/wishlist",
 ];
 
-async function readAuthPayload(request: NextRequest) {
-    const token = request.cookies.get("accessToken")?.value;
-    const secret = process.env.JWT_SECRET;
-
-    if (!token || !secret) {
-        return { payload: null, shouldClearCookie: Boolean(token) };
-    }
-
-    try {
-        const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
-        const parsedPayload = authPayloadSchema.safeParse(payload);
-
-        return {
-            payload: parsedPayload.success ? parsedPayload.data : null,
-            shouldClearCookie: !parsedPayload.success,
-        };
-    } catch {
-        return { payload: null, shouldClearCookie: true };
-    }
-}
-
-function isProtectedPath(pathname: string) {
-    return protectedPrefixes.some(
-        (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+function isPathMatch(pathname: string, paths: string[]) {
+    return paths.some(
+        (path) => pathname === path || pathname.startsWith(`${path}/`)
     );
 }
 
-function deleteAuthCookie(response: NextResponse) {
-    response.cookies.delete({
-        name: "accessToken",
-        path: "/",
-    });
+function redirectToLogin(request: NextRequest) {
+    const loginUrl = new URL("/login", request.url);
+    const redirectTo = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+
+    loginUrl.searchParams.set("redirectTo", redirectTo);
+
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete("accessToken");
+
+    return response;
 }
 
+// Middleware to enforce auth flow: redirect guests from protected pages and prevent logged-in users from accessing auth pages.
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const { payload, shouldClearCookie } = await readAuthPayload(request);
-    const isAuthenticated = Boolean(payload);
 
-    if (authPages.has(pathname) && isAuthenticated) {
-        return NextResponse.redirect(new URL("/", request.url));
+    if (
+        pathname.startsWith("/_next") ||
+        pathname.startsWith("/api/public") ||
+        pathname.includes(".")
+    ) {
+        return NextResponse.next();
     }
 
-    if (isProtectedPath(pathname) && !isAuthenticated) {
-        const loginUrl = new URL("/login", request.url);
-        loginUrl.searchParams.set("from", pathname);
+    const isAuthPath = isPathMatch(pathname, authPaths);
+    const isProtectedPath = isPathMatch(pathname, protectedPaths);
+    const token = request.cookies.get("accessToken")?.value;
 
-        const response = NextResponse.redirect(loginUrl);
+    if (isAuthPath) {
+        if (!token) return NextResponse.next();
 
-        if (shouldClearCookie) {
-            deleteAuthCookie(response);
+        const payload = await verifyAccessToken(token);
+
+        if (payload) {
+            return NextResponse.redirect(new URL("/", request.url));
         }
 
+        const response = NextResponse.next();
+        response.cookies.delete("accessToken");
         return response;
     }
 
-    const response = NextResponse.next();
+    if (isProtectedPath) {
+        if (!token) return redirectToLogin(request);
 
-    if (shouldClearCookie) {
-        deleteAuthCookie(response);
+        const payload = await verifyAccessToken(token);
+
+        if (payload) {
+            return NextResponse.next();
+        }
+
+        return redirectToLogin(request);
     }
 
-    return response;
+    return NextResponse.next();
 }
 
 export const config = {

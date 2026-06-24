@@ -1,7 +1,8 @@
 import Link from "next/link"
-import Navigation from "./Navigation";
 import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSun, FiMoon, FiSearch } from 'react-icons/fi';
+import { getCurrentUser } from "@/lib/auth";
 
+import Navigation from "./Navigation";
 import MobileMenu from "./MoblieMenu";
 import Theme from "./Theme";
 
@@ -35,8 +36,9 @@ const Navbar = () => {
                         </Link>
 
                         {/* Theme Toggle */}
-                        <Theme device=""/>
+                        <Theme device="" />
 
+                        
                         <div className="flex items-center space-x-3">
                             <Link
                                 href="/login"
