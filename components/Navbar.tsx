@@ -19,25 +19,25 @@ const Navbar = () => {
     const pathname = usePathname();
 
     useEffect(() => {
-    const fetchSession = async () => {
-        try {
-            const res = await fetch("/api/auth/session");
+        const fetchSession = async () => {
+            try {
+                const res = await fetch("/api/auth/session");
 
-            if (!res.ok) {
-                throw new Error("Failed to fetch session");
+                if (!res.ok) {
+                    throw new Error("Failed to fetch session");
+                }
+
+                const data = await res.json();
+                setUser(data.user);
+            } catch (error) {
+                setUser(null);
+            } finally {
+                setLoading(false);
             }
+        };
 
-            const data = await res.json();
-            setUser(data.user);
-        } catch (error) {
-            setUser(null);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    fetchSession();
-}, [pathname]);
+        fetchSession();
+    }, [pathname]);
 
     if (loading) {
         return (
@@ -64,7 +64,7 @@ const Navbar = () => {
                             <Theme device="" />
                         </div>
                     </div>
-                    <MobileMenu />
+                    <MobileMenu loading={loading} user={user} />
                 </div>
             </nav>
         );
@@ -103,14 +103,14 @@ const Navbar = () => {
 
                         {!loading && user ? (
                             <>
-                            <Link
-                            href="/wishlist"
-                            className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                                <Link
+                                    href="/wishlist"
+                                    className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                                     aria-label="Wishlist"
-                            >
-                            <FiHeart size={20} />
-                            </Link>
-                            <Link
+                                >
+                                    <FiHeart size={20} />
+                                </Link>
+                                <Link
                                     href="/cart"
                                     className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors relative"
                                     aria-label="Shopping cart"
@@ -140,39 +140,39 @@ const Navbar = () => {
                                             Orders
                                         </Link>
                                         <form action={logoutAction}>
-                                        <button
-                                            type="submit"
-                                            className="w-full text-left cursor-pointer px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700"
-                                        >
-                                            Logout
-                                        </button>
-                                    </form>
+                                            <button
+                                                type="submit"
+                                                className="w-full text-left cursor-pointer px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700"
+                                            >
+                                                Logout
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </>
-                        ):(
+                        ) : (
                             <div className="flex items-center space-x-3">
-                            {!loading && (
-                                <>
-                            <Link
-                                href="/login"
-                                className="text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors font-medium"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                href="/signup"
-                                className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors font-medium"
-                            >
-                                Sign Up
-                            </Link>
-                            </>
-                            )}
-                        </div>
+                                {!loading && (
+                                    <>
+                                        <Link
+                                            href="/login"
+                                            className="text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors font-medium"
+                                        >
+                                            Login
+                                        </Link>
+                                        <Link
+                                            href="/signup"
+                                            className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors font-medium"
+                                        >
+                                            Sign Up
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
-                <MobileMenu />
+                <MobileMenu loading={loading} user={user} />
             </div>
         </nav>
     )
