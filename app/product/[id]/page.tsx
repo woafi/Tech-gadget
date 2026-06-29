@@ -48,6 +48,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         notFound();
     }
 
+    //for product fectch
     const product = await getProductById(productId);
 
     if (!product) {
@@ -129,6 +130,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         <div className="flex flex-wrap gap-4 mt-auto">
                             <AddToCartButton
                                 productId={product.id}
+
                                 disabled={!inStock}
                                 label="Add to Cart"
                                 className="px-8 py-3.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg font-medium cursor-pointer"

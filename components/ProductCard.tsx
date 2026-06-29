@@ -14,6 +14,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
+
+    //for add to the cart
+
     return (
         <div className="group block bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-2xl overflow-hidden transition-transform duration-300 hover:scale-105">
             {/* Image */}
