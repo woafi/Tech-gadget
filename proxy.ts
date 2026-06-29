@@ -11,6 +11,7 @@ const authPaths = [
 const protectedPaths = [
     "/profile",
     "/cart",
+    "/api/cart",
     "/orders",
     "/paymentfailed",
     "/paymentsuccess",
@@ -66,7 +67,12 @@ export async function proxy(request: NextRequest) {
     }
 
     if (isProtectedPath) {
-        if (!token) return redirectToLogin(request);
+        if (!token) {
+            if (pathname.startsWith("/api/")) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            }
+            return redirectToLogin(request);
+        }
 
         const payload = await verifyAccessToken(token);
 
@@ -74,6 +80,9 @@ export async function proxy(request: NextRequest) {
             return NextResponse.next();
         }
 
+        if (pathname.startsWith("/api/")) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         return redirectToLogin(request);
     }
 
