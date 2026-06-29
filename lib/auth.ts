@@ -6,6 +6,15 @@ import type { User } from "@prisma/client";
 const TOKEN_EXPIRY = "30d";
 const TOKEN_MAX_AGE = 60 * 60 * 24 * 30;
 
+export interface UserPayload {
+    id: number;
+    userid: number;
+    username: string;
+    email: string;
+    role?: string;
+    phoneNumber?: string;
+}
+
 type AuthUser = Pick<User, "id" | "name" | "email"> &
     Partial<{
         role: string | null;
@@ -94,7 +103,7 @@ export async function clearAuthCookies() {
 }
 
 // Get current user from cookies
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<UserPayload | null> {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
@@ -103,7 +112,7 @@ export async function getCurrentUser() {
     }
 
     const payload = await verifyAccessToken(accessToken);
-    return payload;
+    return payload as UserPayload | null;
 }
 
 

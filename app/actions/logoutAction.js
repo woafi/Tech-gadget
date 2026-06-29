@@ -11,7 +11,6 @@ export async function logoutAction() {
         name: "accessToken",
         path: "/",
     });
-    // cookieStore.delete('accessToken');
 
     revalidatePath("/");
     redirect("/");
