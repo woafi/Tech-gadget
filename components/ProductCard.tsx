@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { FiHeart } from 'react-icons/fi';
 import Image from "next/image";
 import type { Product, Category } from "@prisma/client";
 import AddToCartButton from "@/components/AddToCartButton";
+import WishlistButton from "@/components/WishlistButton";
 
 type ProductWithCategory = Product & {
   category: Category;
@@ -49,13 +49,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 )}
 
                 {/* Wishlist Button */}
-                <button
-                    type="button"
-                    aria-label="Add to wishlist"
-                    className="absolute top-3 right-3 z-10 p-2.5 rounded-full cursor-pointer backdrop-blur-md shadow-lg transition-all bg-white/90 dark:bg-slate-800/90 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
-                >
-                    <FiHeart />
-                </button>
+                <WishlistButton
+                    productId={product.id}
+                    iconOnly
+                    className="absolute top-3 right-3 z-10 p-2.5 rounded-full backdrop-blur-md shadow-lg transition-all bg-white/90 dark:bg-slate-800/90 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
+                />
 
                 {/* Stock Badge */}
                 {product.stock < 10 && product.stock > 0 && (

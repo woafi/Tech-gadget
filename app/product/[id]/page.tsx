@@ -2,9 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { FiArrowLeft, FiHeart, FiPackage, FiTag } from "react-icons/fi";
+import { FiArrowLeft, FiPackage, FiTag } from "react-icons/fi";
 import { getAllProductIds, getProductById } from "@/lib/product-store";
 import AddToCartButton from "@/components/AddToCartButton";
+import WishlistButton from "@/components/WishlistButton";
 
 export const dynamicParams = false;
 
@@ -135,13 +136,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 label="Add to Cart"
                                 className="px-8 py-3.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg font-medium cursor-pointer"
                             />
-                            <button
-                                type="button"
-                                aria-label="Add to wishlist"
+                            <WishlistButton
+                                productId={product.id}
                                 className="px-4 py-3.5 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-300 transition-colors cursor-pointer"
-                            >
-                                <FiHeart size={20} />
-                            </button>
+                            />
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 
 import { logoutAction } from "@/app/actions/logoutAction"
 import type { UserPayload } from "@/lib/auth";
+import { useCartStore } from "@/stores/cart-store";
 import Navigation from "./Navigation";
 import MobileMenu from "./MoblieMenu";
 import Theme from "./Theme";
@@ -17,6 +18,8 @@ const Navbar = () => {
     const [user, setUser] = useState<UserPayload | null>(null);
     const [loading, setLoading] = useState(true);
     const pathname = usePathname();
+    const cartCount = useCartStore((state) => state.count);
+    const fetchCartCount = useCartStore((state) => state.fetchCount);
 
     useEffect(() => {
         const fetchSession = async () => {
@@ -37,7 +40,14 @@ const Navbar = () => {
         };
 
         fetchSession();
-    }, [pathname]);
+        fetchCartCount();
+    }, [pathname, fetchCartCount]);
+
+    useEffect(() => {
+        const handleCartUpdate = () => fetchCartCount();
+        window.addEventListener("cart-updated", handleCartUpdate);
+        return () => window.removeEventListener("cart-updated", handleCartUpdate);
+    }, [fetchCartCount]);
 
     if (loading) {
         return (
@@ -116,6 +126,11 @@ const Navbar = () => {
                                     aria-label="Shopping cart"
                                 >
                                     <FiShoppingCart size={20} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-sky-600 rounded-full">
+                                            {cartCount > 99 ? "99+" : cartCount}
+                                        </span>
+                                    )}
                                 </Link>
 
                                 {/* Dropdown button */}

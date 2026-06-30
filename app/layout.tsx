@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +27,20 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Navbar />
-        <div className='flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-200'>
-          {children}
-        </div>
-        <Footer />
+          <Navbar />
+          <div className='flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-200'>
+            {children}
+          </div>
+          <Footer />
         </ThemeProvider>
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+          duration={3000}
+          expand
+          visibleToasts={5}
+        />
       </body>
     </html>
   );

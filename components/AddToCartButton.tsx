@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { FiShoppingCart, FiCheck } from "react-icons/fi"
+import { toast } from "sonner"
 
 interface AddToCartButtonProps {
     productId: number
@@ -47,6 +48,7 @@ export default function AddToCartButton({
         } else {
             window.dispatchEvent(new Event("cart-updated"))
         }
+        toast.success("Product added to cart!")
         setAdded(true)
         setTimeout(() => setAdded(false), 1500)
     }

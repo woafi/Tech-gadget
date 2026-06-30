@@ -5,12 +5,14 @@ import Link from "next/link";
 
 import { logoutAction } from "@/app/actions/logoutAction";
 import type { UserPayload } from "@/lib/auth";
+import { useCartStore } from "@/stores/cart-store";
 
 import Navigation from "./Navigation";
 import Theme from "./Theme";
 
 export default function MobileMenu({loading, user}:{loading: boolean, user: UserPayload | null}) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const cartCount = useCartStore((state) => state.count);
 
     return (
         <>
@@ -41,10 +43,15 @@ export default function MobileMenu({loading, user}:{loading: boolean, user: User
                                 </Link>
                                 <Link
                                     href="/cart"
-                                    className="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:text-sky-400 dark:hover:text-sky-400 transition-colors px-2"
+                                    className="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:text-sky-400 dark:hover:text-sky-400 transition-colors px-2 relative"
                                 >
                                     <FiShoppingCart size={18} />
                                     <span>Cart</span>
+                                    {cartCount > 0 && (
+                                        <span className="ml-auto flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-sky-600 rounded-full">
+                                            {cartCount > 99 ? "99+" : cartCount}
+                                        </span>
+                                    )}
                                 </Link>
 
                                 <div className="border-t border-gray-200 dark:border-gray-700" />
