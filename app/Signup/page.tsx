@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type KeyboardEvent } from "react";
+import { Suspense, useActionState, useEffect, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import {
     FiAlertCircle,
@@ -13,6 +13,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 
 import { signupAction } from "@/app/actions/signupAction";
+import OAuthErrorBanner from "@/components/OAuthErrorBanner";
 
 const initialState = {
     message: "",
@@ -92,6 +93,10 @@ export default function Signup() {
                         </p>
                     </div>
 
+                    <Suspense fallback={null}>
+                        <OAuthErrorBanner />
+                    </Suspense>
+
                     {state.message && (
                         <div
                             className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3 animate-slide-in-left"
@@ -106,14 +111,13 @@ export default function Signup() {
                     <div
                         className="mb-6 animate-fade-in"
                     >
-                        <button
-                            type="button"
-                            disabled
-                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-500 dark:text-gray-400 shadow-sm disabled:cursor-not-allowed disabled:opacity-70"
+                        <a
+                            href="/api/auth/google"
+                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                         >
                             <FcGoogle size={24} />
                             <span>Sign up with Google</span>
-                        </button>
+                        </a>
                     </div>
 
                     <div
