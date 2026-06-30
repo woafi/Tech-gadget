@@ -113,7 +113,7 @@ export default function WishlistButton({
             type="button"
             onClick={handleClick}
             disabled={disabled}
-            className={`${className} ${activeClass} transition-all duration-200 ${animating ? "scale-110" : "scale-100"}`}
+            className={`${className} ${activeClass} transition-all duration-200 cursor-pointer ${animating ? "scale-110" : "scale-100"}`}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
             {inWishlist ? <FiCheck size={16} className="transition-transform duration-200" /> : <FiHeart size={16} className="transition-transform duration-200" />}

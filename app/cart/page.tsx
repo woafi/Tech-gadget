@@ -3,7 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FiTrash2, FiShoppingBag, FiArrowLeft, FiMinus, FiPlus } from "react-icons/fi";
+import { FiTrash2, FiShoppingBag, FiArrowLeft, FiMinus, FiPlus, FiXCircle } from "react-icons/fi";
+import { useCartStore } from "@/stores/cart-store";
 
 interface CartItem {
   id: number;
@@ -63,6 +64,25 @@ export default function CartPage() {
       setUpdatingItems((prev) => {
         const next = new Set(prev);
         next.delete(id);
+        return next;
+      });
+    }
+  }, [fetchCart]);
+
+  const clearAll = useCallback(async () => {
+    setUpdatingItems((prev) => new Set(prev).add(-1));
+    try {
+      const res = await fetch("/api/cart?all=true", { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to clear cart");
+      await fetchCart();
+      useCartStore.getState().fetchCount();
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch {
+      await fetchCart();
+    } finally {
+      setUpdatingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(-1);
         return next;
       });
     }
@@ -227,7 +247,7 @@ export default function CartPage() {
                 );
               })}
 
-              <div className="pt-2">
+              <div className="pt-2 flex items-center justify-between">
                 <Link
                   href="/shop"
                   className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
@@ -235,6 +255,15 @@ export default function CartPage() {
                   <FiArrowLeft />
                   Continue Shopping
                 </Link>
+
+                <button
+                  onClick={clearAll}
+                  disabled={updatingItems.has(-1)}
+                  className="inline-flex cursor-pointer items-center gap-2 text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FiXCircle size={16} />
+                  Clear All
+                </button>
               </div>
             </div>
 

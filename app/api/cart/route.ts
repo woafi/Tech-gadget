@@ -99,6 +99,12 @@ export async function DELETE(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
+
+  if (searchParams.get("all") === "true") {
+    await prisma.cart.deleteMany({ where: { userId: user.id } });
+    return NextResponse.json({ message: "Cart cleared" });
+  }
+
   const id = Number(searchParams.get("id"));
 
   if (!id) {
