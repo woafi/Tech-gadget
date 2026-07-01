@@ -51,15 +51,6 @@ async function handleSuccessRoute(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
 }
 
-export async function GET(request: NextRequest) {
-    const transactionId = request.nextUrl.searchParams.get("tran_id");
-    const orderId = request.nextUrl.searchParams.get("order_id");
-    void transactionId;
-    void orderId;
-
-    return handleSuccessRoute(request);
-}
-
 export async function POST(request: NextRequest) {
     const transactionId = request.nextUrl.searchParams.get("tran_id");
     const orderId = request.nextUrl.searchParams.get("order_id");

@@ -54,7 +54,7 @@ export function getPaymentBaseUrl() {
         process.env.BACKEND_API_URL ??
         process.env.NEXT_PUBLIC_APP_URL ??
         process.env.CLIENT_URL ??
-        "http://localhost:3000"
+        "https://tech-gadget-live.vercel.app"
     ).replace(/\/$/, "");
 }
 
