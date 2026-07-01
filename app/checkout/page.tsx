@@ -498,7 +498,7 @@ export default function CheckoutPage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full px-4 py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-500 text-white rounded-lg transition-colors font-semibold shadow-sm disabled:opacity-70 disabled:cursor-wait"
+                                    className="cursor-pointer w-full px-4 py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-500 text-white rounded-lg transition-colors font-semibold shadow-sm disabled:opacity-70 disabled:cursor-wait"
                                 >
                                     {isSubmitting ? "Initializing payment..." : "Place Order"}
                                 </button>

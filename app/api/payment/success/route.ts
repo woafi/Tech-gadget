@@ -18,7 +18,15 @@ async function getPaymentParams(request: NextRequest) {
 
 async function handleSuccessRoute(request: NextRequest) {
     const { transactionId, orderId } = await getPaymentParams(request);
-    const redirectUrl = new URL("/order", getClientBaseUrl());
+    const redirectUrl = new URL("/paymentSuccess", getClientBaseUrl());
+
+    if (transactionId) {
+        redirectUrl.searchParams.set("tran_id", transactionId);
+    }
+
+    if (orderId) {
+        redirectUrl.searchParams.set("order_id", orderId);
+    }
 
     if (!transactionId || !orderId) {
         return NextResponse.redirect(redirectUrl);

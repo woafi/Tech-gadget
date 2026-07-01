@@ -37,7 +37,7 @@ export default function RootLayout({
           position="top-right"
           richColors
           closeButton
-          duration={3000}
+          duration={2000}
           expand
           visibleToasts={5}
         />

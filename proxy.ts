@@ -11,11 +11,8 @@ const authPaths = [
 const protectedPaths = [
     "/profile",
     "/cart",
-    "/api/cart",
-    "/orders",
+    "/order",
     "/checkout",
-    "/paymentfailed",
-    "/paymentsuccess",
     "/wishlist",
 ];
 
