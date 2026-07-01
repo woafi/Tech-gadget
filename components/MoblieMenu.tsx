@@ -63,7 +63,7 @@ export default function MobileMenu({loading, user}:{loading: boolean, user: User
                                     Profile
                                 </Link>
                                 <Link
-                                    href="/orders"
+                                    href="/order"
                                     className="text-gray-700 dark:text-gray-300 hover:text-sky-400 dark:hover:text-sky-400 transition-colors px-2"
                                 >
                                     Orders

@@ -5,11 +5,12 @@ import {
     useEffect,
     useMemo,
     useState,
-    type ChangeEvent,
     type KeyboardEvent,
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import {
     FiArrowLeft,
     FiCreditCard,
@@ -21,6 +22,10 @@ import {
     FiTruck,
     FiUser,
 } from "react-icons/fi";
+import {
+    checkoutSchema,
+    type CheckoutFormData,
+} from "@/utils/vaildationCheckoutSchema";
 
 interface CartItem {
     id: number;
@@ -50,17 +55,27 @@ const calcSubtotal = (items: CartItem[]) =>
     items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
 export default function CheckoutPage() {
+    const router = useRouter();
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState("");
-    const [formValues, setFormValues] = useState({
-        fullName: "",
-        email: "",
-        phone: "",
-        address: "",
-        city: "",
-        zipCode: "",
-        paymentMethod: "sslcommerz",
+    const [submitError, setSubmitError] = useState("");
+    const {
+        register,
+        handleSubmit,
+        setError,
+        setValue,
+        formState: { errors, isSubmitting },
+    } = useForm<CheckoutFormData>({
+        defaultValues: {
+            fullName: "",
+            email: "",
+            phone: "",
+            address: "",
+            city: "",
+            zipCode: "",
+            paymentMethod: "sslcommerz",
+        },
     });
 
     const subtotal = useMemo(() => calcSubtotal(cartItems), [cartItems]);
@@ -97,12 +112,9 @@ export default function CheckoutPage() {
                 const user = sessionData.user as SessionUser | null;
 
                 if (user) {
-                    setFormValues((current) => ({
-                        ...current,
-                        fullName: current.fullName || user.username || "",
-                        email: current.email || user.email || "",
-                        phone: current.phone || user.phoneNumber || "",
-                    }));
+                    setValue("fullName", user.username || "");
+                    setValue("email", user.email || "");
+                    setValue("phone", user.phoneNumber || "");
                 }
             }
         } catch {
@@ -111,7 +123,7 @@ export default function CheckoutPage() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [setValue]);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -123,22 +135,57 @@ export default function CheckoutPage() {
         return () => window.clearTimeout(timeoutId);
     }, [fetchCheckoutData]);
 
-    const handleChange = (
-        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    ) => {
-        const { name, value } = event.target;
-        setFormValues((current) => ({
-            ...current,
-            [name]: value,
-        }));
-    };
-
     const handleFormKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
         if (
             (event.ctrlKey || event.metaKey) &&
             (event.key === "Enter" || event.key === "NumpadEnter")
         ) {
             event.preventDefault();
+            event.currentTarget.requestSubmit();
+        }
+    };
+
+    const onSubmit = async (values: CheckoutFormData) => {
+        setSubmitError("");
+
+        const result = checkoutSchema.safeParse(values);
+
+        if (!result.success) {
+            result.error.issues.forEach((issue) => {
+                const field = issue.path[0] as keyof CheckoutFormData | undefined;
+
+                if (field) {
+                    setError(field, {
+                        type: "manual",
+                        message: issue.message,
+                    });
+                }
+            });
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/payment/initialize", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(result.data),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.gatewayUrl) {
+                throw new Error(data.error ?? "Unable to initialize payment");
+            }
+
+            router.push(data.gatewayUrl);
+        } catch (error) {
+            setSubmitError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to initialize payment",
+            );
         }
     };
 
@@ -219,7 +266,17 @@ export default function CheckoutPage() {
                                 </p>
                             </div>
 
-                            <form onKeyDown={handleFormKeyDown} className="space-y-6">
+                            {submitError && (
+                                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg text-sm font-medium text-red-700 dark:text-red-400 animate-slide-in-left">
+                                    {submitError}
+                                </div>
+                            )}
+
+                            <form
+                                onSubmit={handleSubmit(onSubmit)}
+                                onKeyDown={handleFormKeyDown}
+                                className="space-y-6"
+                            >
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div>
                                         <label
@@ -234,15 +291,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="fullName"
-                                                name="fullName"
                                                 type="text"
-                                                value={formValues.fullName}
-                                                onChange={handleChange}
+                                                {...register("fullName")}
                                                 autoComplete="name"
                                                 placeholder="Your name"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.fullName
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.fullName && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.fullName.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -258,15 +322,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="email"
-                                                name="email"
                                                 type="email"
-                                                value={formValues.email}
-                                                onChange={handleChange}
+                                                {...register("email")}
                                                 autoComplete="email"
                                                 placeholder="you@example.com"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.email
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.email && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.email.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -282,15 +353,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="phone"
-                                                name="phone"
                                                 type="tel"
-                                                value={formValues.phone}
-                                                onChange={handleChange}
+                                                {...register("phone")}
                                                 autoComplete="tel"
                                                 placeholder="+1 555 0123"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.phone
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.phone && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.phone.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -306,15 +384,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="city"
-                                                name="city"
                                                 type="text"
-                                                value={formValues.city}
-                                                onChange={handleChange}
+                                                {...register("city")}
                                                 autoComplete="address-level2"
                                                 placeholder="City"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.city
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.city && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.city.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="sm:col-span-2">
@@ -330,15 +415,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="address"
-                                                name="address"
                                                 type="text"
-                                                value={formValues.address}
-                                                onChange={handleChange}
+                                                {...register("address")}
                                                 autoComplete="street-address"
                                                 placeholder="Street address"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.address
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.address && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.address.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -354,15 +446,22 @@ export default function CheckoutPage() {
                                             </div>
                                             <input
                                                 id="zipCode"
-                                                name="zipCode"
                                                 type="text"
-                                                value={formValues.zipCode}
-                                                onChange={handleChange}
+                                                {...register("zipCode")}
                                                 autoComplete="postal-code"
                                                 placeholder="10001"
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.zipCode
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             />
                                         </div>
+                                        {errors.zipCode && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.zipCode.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -378,26 +477,30 @@ export default function CheckoutPage() {
                                             </div>
                                             <select
                                                 id="paymentMethod"
-                                                name="paymentMethod"
-                                                value={formValues.paymentMethod}
-                                                onChange={handleChange}
-                                                className="w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all border-gray-300 dark:border-gray-600"
+                                                {...register("paymentMethod")}
+                                                className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-900 dark:text-white transition-all ${
+                                                    errors.paymentMethod
+                                                        ? "border-red-300 dark:border-red-700"
+                                                        : "border-gray-300 dark:border-gray-600"
+                                                }`}
                                             >
                                                 <option value="sslcommerz">SSLCommerz</option>
-                                                <option value="cash_on_delivery">
-                                                    Cash on Delivery
-                                                </option>
                                             </select>
                                         </div>
+                                        {errors.paymentMethod && (
+                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                                {errors.paymentMethod.message}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
                                 <button
-                                    type="button"
-                                    disabled
-                                    className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg transition-colors font-semibold shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full px-4 py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-500 text-white rounded-lg transition-colors font-semibold shadow-sm disabled:opacity-70 disabled:cursor-wait"
                                 >
-                                    Place Order
+                                    {isSubmitting ? "Initializing payment..." : "Place Order"}
                                 </button>
                             </form>
                         </section>
