@@ -13,6 +13,7 @@ const protectedPaths = [
     "/cart",
     "/api/cart",
     "/orders",
+    "/checkout",
     "/paymentfailed",
     "/paymentsuccess",
     "/wishlist",

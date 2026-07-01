@@ -44,7 +44,11 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    fetchCart();
+    const timeoutId = window.setTimeout(() => {
+      void fetchCart();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [fetchCart]);
 
   const updateQuantity = useCallback(async (id: number, newQuantity: number) => {
@@ -306,12 +310,12 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <button
-                  disabled
-                  className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors cursor-not-allowed opacity-70"
+                <Link
+                  href="/checkout"
+                  className="mt-6 block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
                 >
                   Proceed to Checkout
-                </button>
+                </Link>
 
                 <p className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
                   Secure checkout powered by SSLCommerz
