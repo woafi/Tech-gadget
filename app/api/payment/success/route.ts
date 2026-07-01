@@ -54,8 +54,6 @@ async function handleSuccessRoute(request: NextRequest) {
 export async function POST(request: NextRequest) {
     const transactionId = request.nextUrl.searchParams.get("tran_id");
     const orderId = request.nextUrl.searchParams.get("order_id");
-    void transactionId;
-    void orderId;
 
-    return handleSuccessRoute(request);
+    return NextResponse.redirect(`${process.env.CLIENT_URL}/payment/success?tran_id=${transactionId}&order_id=${orderId}`);
 }
