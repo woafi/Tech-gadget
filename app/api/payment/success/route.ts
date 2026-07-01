@@ -29,7 +29,7 @@ async function handleSuccessRoute(request: NextRequest) {
     }
 
     if (!transactionId || !orderId) {
-        return NextResponse.redirect(redirectUrl);
+        return NextResponse.redirect(redirectUrl, 303);
     }
 
     try {
@@ -38,7 +38,7 @@ async function handleSuccessRoute(request: NextRequest) {
         });
 
         if (!order || order.transactionId !== transactionId) {
-            return NextResponse.redirect(redirectUrl);
+            return NextResponse.redirect(redirectUrl, 303);
         }
 
         if (order.status !== "completed" || order.paymentStatus !== "paid") {
@@ -48,15 +48,13 @@ async function handleSuccessRoute(request: NextRequest) {
         console.error("Error handling payment success route:", error);
     }
 
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(redirectUrl, 303);
 }
 
 export async function POST(request: NextRequest) {
-    const transactionId = request.nextUrl.searchParams.get("tran_id");
-    const orderId = request.nextUrl.searchParams.get("order_id");
+    return handleSuccessRoute(request);
+}
 
-    return NextResponse.redirect(
-  `${process.env.CLIENT_URL}/paymentSuccess?tran_id=${transactionId}&order_id=${orderId}`,
-  303
-);
+export async function GET(request: NextRequest) {
+    return handleSuccessRoute(request);
 }
