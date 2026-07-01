@@ -152,7 +152,7 @@ export function buildSslCommerzData(
         total_amount: Number(order.total).toFixed(2),
         currency: "BDT",
         tran_id: transactionId,
-        success_url: `${backendUrl}/api/payment/success?tran_id=${transactionId}&order_id=${order.id}`,
+        success_url: `${backendUrl}/paymentSSLsuccess?tran_id=${transactionId}&order_id=${order.id}`,
         fail_url: `${backendUrl}/api/payment/failed?tran_id=${transactionId}&order_id=${order.id}`,
         cancel_url: `${backendUrl}/api/payment/cancel?tran_id=${transactionId}&order_id=${order.id}`,
         ipn_url: `${backendUrl}/api/payment/ipn`,
