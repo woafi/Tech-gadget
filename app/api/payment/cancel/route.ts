@@ -32,11 +32,11 @@ async function handleCancelRoute(request: NextRequest) {
             });
         }
 
-        return NextResponse.redirect(new URL("/paymentFaild", getClientBaseUrl()));
+        return NextResponse.redirect(new URL("/paymentFaild", getClientBaseUrl()), 303);
     } catch (error) {
         console.error("Error handling payment cancel route:", error);
         // Still redirect even if update fails
-        return NextResponse.redirect(new URL("/paymentFaild", getClientBaseUrl()));
+        return NextResponse.redirect(new URL("/paymentFaild", getClientBaseUrl()), 303);
     }
 }
 
