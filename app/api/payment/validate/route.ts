@@ -3,6 +3,15 @@ import prisma from "@/utils/prisma";
 import { completePaidOrder } from "../_lib/payment";
 import { sendPaymentSuccessEmail } from '@/services/emailService';
 
+async function sendSuccessEmailSafely(
+    order: Parameters<typeof sendPaymentSuccessEmail>[0],
+) {
+    try {
+        await sendPaymentSuccessEmail(order);
+    } catch (emailError) {
+        console.error("Error sending payment success email:", emailError);
+    }
+}
 
 export async function GET(request: NextRequest) {
     try {
@@ -55,6 +64,10 @@ export async function GET(request: NextRequest) {
                 },
             });
 
+            if (fullOrder) {
+                await sendSuccessEmailSafely(fullOrder);
+            }
+
             return NextResponse.json({
                 success: true,
                 message: "Payment already validated",
@@ -95,13 +108,7 @@ export async function GET(request: NextRequest) {
         if (isValidPayment) {
             const updatedOrder = await completePaidOrder(order);
 
-            // Send payment success email
-            try {
-                await sendPaymentSuccessEmail(updatedOrder);
-            } catch (emailError) {
-                console.error("Error sending payment success email:", emailError);
-                // Don't fail the request if email fails
-            }
+            await sendSuccessEmailSafely(updatedOrder);
 
             return NextResponse.json({
                 success: true,
