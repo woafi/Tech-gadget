@@ -152,11 +152,10 @@ export default function Login() {
                                         defaultValue={state.values.email}
                                         disabled={pending}
                                         autoComplete="email"
-                                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${
-                                            state.fieldErrors.email
-                                                ? "border-red-300 dark:border-red-700"
-                                                : "border-gray-300 dark:border-gray-600"
-                                        }`}
+                                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${state.fieldErrors.email
+                                            ? "border-red-300 dark:border-red-700"
+                                            : "border-gray-300 dark:border-gray-600"
+                                            }`}
                                     />
                                 </div>
                                 {state.fieldErrors.email && (
@@ -187,11 +186,10 @@ export default function Login() {
                                         defaultValue={state.values.password}
                                         disabled={pending}
                                         autoComplete="current-password"
-                                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${
-                                            state.fieldErrors.password
-                                                ? "border-red-300 dark:border-red-700"
-                                                : "border-gray-300 dark:border-gray-600"
-                                        }`}
+                                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-lg focus:ring-2 focus:outline-none focus:ring-sky-500 focus:border-transparent dark:bg-slate-800 dark:text-white transition-all disabled:opacity-70 ${state.fieldErrors.password
+                                            ? "border-red-300 dark:border-red-700"
+                                            : "border-gray-300 dark:border-gray-600"
+                                            }`}
                                     />
                                     <button
                                         type="button"
@@ -242,6 +240,25 @@ export default function Login() {
                                 Sign up
                             </Link>
                         </p>
+                    </div>
+
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400">
+                                    Demo Account
+                                </span>
+                            </div>
+                        </div>
+                        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg" >
+                            <p className="text-sm text-blue-800 dark:text-blue-200">
+                                <span>Email:</span> demo@example.com<br />
+                                <span>Password:</span> Demo123!
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
