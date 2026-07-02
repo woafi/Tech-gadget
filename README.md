@@ -12,7 +12,7 @@
 
 </div>
 
-A modern full-stack e-commerce web app for tech products built with Next.js, TypeScript, Prisma, and PostgreSQL. The project includes user authentication, shopping cart, wishlist, checkout, order history, and SSLCommerz payment integration.
+A modern full-stack e-commerce web app for tech products built with Next.js, TypeScript, Prisma, and PostgreSQL. The project includes user authentication, shopping cart, wishlist, checkout, order history, SSLCommerz payment integration, and automated order confirmation emails sent to customers via Nodemailer.
 
 ## 🌐 Live Demo
 
@@ -26,6 +26,7 @@ A modern full-stack e-commerce web app for tech products built with Next.js, Typ
 - Persistent shopping cart and wishlist
 - Checkout flow with order creation and order history
 - SSLCommerz payment integration
+- Order confirmation emails sent to customers with Nodemailer
 - Dark/light theme support
 - Prisma ORM with PostgreSQL database
 - Server-side API routes built with Next.js App Router
@@ -81,6 +82,12 @@ GOOGLE_REDIRECT_URI="http://localhost:3000/api/auth/google/callback"
 SSL_STORE_ID="your-ssl-store-id"
 SSL_STORE_PASSWORD="your-ssl-store-password"
 SSL_IS_LIVE="false"
+
+# Optional email configuration for order confirmation emails
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT="587"
+EMAIL_USER="your-email@gmail.com"
+EMAIL_PASS="your-app-password"
 
 # Optional app URL settings
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
