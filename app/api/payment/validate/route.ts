@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/prisma";
 import { completePaidOrder } from "../_lib/payment";
+import { sendPaymentSuccessEmail } from '@/services/emailService';
+
 
 export async function GET(request: NextRequest) {
     try {
@@ -95,7 +97,7 @@ export async function GET(request: NextRequest) {
 
             // Send payment success email
             try {
-                // await sendPaymentSuccessEmail(updatedOrder);
+                await sendPaymentSuccessEmail(updatedOrder);
             } catch (emailError) {
                 console.error("Error sending payment success email:", emailError);
                 // Don't fail the request if email fails
