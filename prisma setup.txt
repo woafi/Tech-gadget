@@ -3,6 +3,7 @@ npx prisma migrate dev --name init
 "prisma": {
   "seed": "node prisma/seed.ts"
 }
+npx prisma db push
 npx prisma db seed
 npx prisma studio
 
