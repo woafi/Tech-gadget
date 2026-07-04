@@ -1,4 +1,4 @@
-import { FiArrowRight, FiShoppingBag, FiZap, FiTrendingUp } from 'react-icons/fi';
+import { FiArrowRight } from 'react-icons/fi';
 import Link from "next/link";
 
 import ProductCard from "@/components/ProductCard";
